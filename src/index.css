@@ -1,6 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Aldrich&display=swap');
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Aldrich", Calibri, sans-serif;
   margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
+  padding-top: 10%;
+  max-width: 90%;
+  text-align: center;
+  background-color: #222;
+  color: #DDD;
+}
+
+.btn img {
+  padding-right: 12px;
+}
+
+#main-menu li {
+  list-style-type: none;
+  text-align: center;
+}
+
+#main-menu .btn {
+  border: 8px solid darkcyan;
+  border-radius: 16px;
+  font-size: x-large;
+  margin-bottom: 14%;
+  padding: 16px;
+  color: #DDD;
+}
+
+#main-menu .btn img{
+  width: 128px;
+  height: 128px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+}
+
+.form-control {
+  max-width: 500px;
+  display: inline-block;
+  margin-left: 4%;
 }

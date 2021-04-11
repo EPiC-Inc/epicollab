@@ -1,3 +1,4 @@
+/* MAIN ELECTRON.JS PROCESS */
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
@@ -11,6 +12,12 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: "src/icons/epicollab.ico",
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+    }
   });
 
   // and load the index.html of the app.
