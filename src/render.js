@@ -16,4 +16,6 @@ function listProjects() {
     window.location.href = 'project.html';
 }
 
-
+function goHome() {
+    window.location.href = 'index.html';
+}

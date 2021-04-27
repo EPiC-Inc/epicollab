@@ -1,6 +1,17 @@
 /* MAIN ELECTRON.JS PROCESS */
+/* MOST OF THE FIRST PART IS BOILERPLATE FROM THE CREATE-ELECTRON-APP COMMAND */
 const { app, BrowserWindow } = require('electron');
+const { v1: uuid } = require('uuid');
 const path = require('path');
+const fs = require('fs');
+
+// settings getter thing
+var settings = require('./settings.json');
+var proj_loc = app.getPath('userData') + '\\projects';
+if (!fs.existsSync(proj_loc)){
+  fs.mkdirSync(proj_loc);
+  console.log("Creating data folder"); //TEMP
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -51,3 +62,5 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+/* ACTUAL ORIGINAL STUFF STARTS HERE */
