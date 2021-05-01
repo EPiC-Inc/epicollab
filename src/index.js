@@ -1,7 +1,7 @@
 /* MAIN ELECTRON.JS PROCESS */
 /* MOST OF THIS IS BOILERPLATE FROM THE CREATE-ELECTRON-APP COMMAND */
-const { app, BrowserWindow, ipcMain: ipc } = require('electron');
-const { v1: uuid, v1 } = require('uuid');
+const { app, BrowserWindow, ipcMain: ipc, dialog } = require('electron');
+const { v1: uuid, v4: file_uuid } = require('uuid');
 const path = require('path');
 const fs = require('fs');
 
@@ -17,6 +17,16 @@ if (!fs.existsSync(proj_json)){
   // create blank projects.json file
   fs.writeFileSync(proj_json, JSON.stringify({}));
 }
+// ensure all projects have a proper folder and repair if needed
+fs.readFile(proj_json, (err, data) => {
+  data = JSON.parse(data);
+  Object.keys(data).forEach(id => {
+    if (!fs.existsSync(proj_loc+'/'+id)){
+      console.log("Recreating project folder for "+data[id].name); //TEMP
+      fs.mkdirSync(proj_loc+'/'+id);
+    }
+  });
+});
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -71,35 +81,141 @@ app.on('activate', () => {
 
 /* ACTUAL ORIGINAL STUFF STARTS HERE */
 // interprocess communication stuffs
+//TODO: Maybe replace some of the synchronous stuff with async functions to speed it up a bit
+
 
 //ANCHOR: new project signal
 ipc.on('newProject', (event, arg) => {
-  var proj_uuid = uuid(); // create a UUID for the project
-  console.log(arg + ' ' + proj_uuid); // log project name + uuid
+  var proj_id = uuid(); // create a UUID for the project
+  console.log(arg + ' ' + proj_id); // log project name + uuid
   var old_json = fs.readFileSync(proj_json);  // get old project contents
   var new_json = JSON.parse(old_json);
 
-  new_json[proj_uuid] = {
+  new_json[proj_id] = {
     name: arg,
-    files: []
+    files: {}
   };
-  console.log(JSON.parse(old_json));  //TEMP
-  console.log(new_json);  //TEMP
+  //console.log(JSON.parse(old_json));  //TEMP
+  //console.log(new_json);  //TEMP
 
   // write new json to file
   fs.writeFileSync(proj_json, JSON.stringify(new_json));
 
   // create project folder for sounds
-  if (!fs.existsSync(proj_loc+'/'+proj_uuid)){
+  if (!fs.existsSync(proj_loc+'/'+proj_id)){
     console.log("Creating data folder"); //TEMP
-    fs.mkdirSync(proj_loc);
+    fs.mkdirSync(proj_loc+'/'+proj_id);
   }
 });
 
 //ANCHOR: list projects signal
-ipc.on('listProjects', (event) => {
+ipc.handle('listProjects', (event) => {
   // res = response
-  var res = fs.readFileSync(proj_json);
+  res = fs.readFileSync(proj_json)
   res = JSON.parse(res);
-  event.reply('projects', res);
+  return res;
 });
+
+//ANCHOR: signal to list files inside project
+ipc.on('listFiles', (event, proj_id) => {
+  // get list of files used by project
+  var proj_files = fs.readFileSync(proj_json);
+  proj_files = JSON.parse(proj_files);
+  proj_files = proj_files[proj_id].files;
+
+  // compare to files stored
+  var files = fs.readdirSync(proj_loc+'/'+proj_id)
+  //console.log(files);     //TEMP
+  //console.log(proj_files);
+  var file_list = {}
+  Object.keys(proj_files).forEach(file => {
+    file_list[file] = {
+      name: proj_files[file].name,
+      synced: false,
+    }
+    if (files.includes(file)) {
+      file_list[file].file_loc = proj_loc+'/'+proj_id+'/'+file;
+      file_list[file].synced = true;
+    }
+  });
+  event.reply('files', file_list);
+});
+
+//ANCHOR: add file signal
+ipc.handle('addFile', (event, arg) => {
+  var proj_id = arg[0];
+  var res = []
+  arg[1].forEach(file => {
+    if (file.mime != 'audio/wav') {return;} // Skip to the next file if the current one is not a .wav
+
+    // make sure the id is accurate
+    // this essentially just keeps the extension so that nothing dies
+    var file_id = file_uuid();
+    file_id += "." + file.name.slice(file.name.indexOf('.', -1) + 1);
+
+    //TODO: send proj_id, file_id, file.name, and file itself to remote server
+
+    // save file to project folder
+    var new_file = proj_loc + '/' + proj_id + '/' + file_id;
+    console.log("adding file " + file.path + " to project as " + file_id); //TEMP
+    console.log("new path will be "+new_file);
+    fs.copyFile(file.path, new_file, (err) => {
+      if (err) {dialog.showErrorBox("[X] Error copying file!", err);}
+    });
+    // and projects.json
+    var old_json = fs.readFileSync(proj_json);  // get old project contents
+    var new_json = JSON.parse(old_json);
+    new_json[proj_id].files[file_id] = {
+      name: file.name
+    };
+    // write new json to file
+    fs.writeFileSync(proj_json, JSON.stringify(new_json));
+
+    res.push(file);
+  });
+  return res;
+});
+
+ipc.on('syncProject', (event, proj_id) => {
+  console.log("Syncing project with server...");
+  //TODO: get current project.json from server
+  // add whatever's missing to current projects.json
+});
+
+/* //ANCHOR: edit file signal
+ipc.on('editFile', (event, arg) => {
+  var file = proj_loc + '/' + arg.proj_id + '/' +arg.target;
+  console.log("starting file operation on file " + file); //TEMP
+  switch(arg.operation) {
+    case 'create':
+      console.log('creating file...');  //TEMP
+      //file_uuid();
+      break;
+    case 'delete':
+      console.log('deleting file...');  //TEMP
+      break;
+    case 'replace':
+      console.log('replacing file...'); //TEMP
+      break;
+  }
+}); */
+
+ipc.on('error', (event, msg) => {
+  dialog.showErrorBox(msg[0], msg[1]);
+});
+ipc.on('info', (event, msg) => {
+  var options = {
+    type: 'info',
+    title: msg[0],
+    detail: msg[1]
+  }
+  dialog.showMessageBox(options);
+})
+ipc.on('warn', (event, msg) => {
+  var options = {
+    type: 'warning',
+    title: msg[0],
+    detail: msg[1]
+  }
+  dialog.showMessageBox(options);
+})

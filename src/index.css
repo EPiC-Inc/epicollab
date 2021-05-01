@@ -59,7 +59,26 @@ body {
   cursor: pointer;
   transition-duration: 250ms;
   transition-timing-function: ease-out;
+  margin-bottom: 1%;
 }
 .proj-name:hover {
   filter: drop-shadow(4px 4px 3px cyan);
+}
+
+.drag::after {
+  content: " ";
+  z-index: 10;
+  display: block;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(1, 192, 206, 0.5);
+  outline: 8px dashed darkcyan;
+  outline-offset: -24px;
+}
+
+.file-synced {
+  color: lightgreen;
 }
