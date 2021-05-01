@@ -200,6 +200,16 @@ ipc.on('editFile', (event, arg) => {
   }
 }); */
 
+//ANCHOR: drag start
+ipc.on('ondragstart', (event, arg) => {
+  //console.log(arg);
+  event.sender.startDrag({
+    file: proj_loc + '/' + arg[0] + '/' + arg[1],
+    icon: 'src/icons/file-earmark-music.png'
+  });
+});
+
+//ANCHOR: msgboxes
 ipc.on('error', (event, msg) => {
   dialog.showErrorBox(msg[0], msg[1]);
 });

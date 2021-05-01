@@ -39,17 +39,10 @@ dragDrop('#dropZone', (files) => {
     });
 });
 
-//ANCHOR: drag out
-$('#drag').on('dragstart', (event) => {
-    event.originalEvent.preventDefault();
-    ipcRenderer.send('ondragstart', '/absolute/path/to/the/item');
-});
-
 ipc.on('files', (event, res) => {
     $('#files').empty();
-    console.log(res);   //TEMP
+    //console.log(res);   //TEMP
     Object.keys(res).forEach(file => {
-        console.log('abc123');   //TEMP
         var is_synced = res[file].synced;
         var _name = res[file].name;
         // spaghetti code assembly line :]
@@ -57,12 +50,24 @@ ipc.on('files', (event, res) => {
         if (is_synced) {
             proper_class = 'file file-synced';
         }
-        $('#files').append("<div class=\"" + proper_class + "\" id=\"" + file + "\" \
+        var new_child = $("<div class=\"" + proper_class + "\" \
         draggable=\"" + is_synced.toString() + "\"> \
         " + _name + " \
          \
         </div>");
+        new_child.attr('id', file);
+        new_child.on('dragstart', (event) => {
+            console.log('a');
+            event.originalEvent.preventDefault();
+            ipc.send('ondragstart', [proj_id, file]);
+        });
+        new_child.on('dragend', function(event) {
+            console.log('dragend');
+          });
+        $('#files').append(new_child);
     });
+
+    //ANCHOR: drag out
 });
 
 sync();
