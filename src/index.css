@@ -36,8 +36,30 @@ body {
   padding: 0;
 }
 
+#new-project .btn-default {
+  width: auto;
+  max-width: fit-content;
+}
+
 .form-control {
   max-width: 500px;
   display: inline-block;
-  margin-left: 4%;
+}
+
+.form-control:disabled {
+  cursor: not-allowed;
+}
+
+#dropZone {
+  padding-top: 2%;
+}
+
+.proj-name {
+  font-size: xx-large;
+  cursor: pointer;
+  transition-duration: 250ms;
+  transition-timing-function: ease-out;
+}
+.proj-name:hover {
+  filter: drop-shadow(4px 4px 3px cyan);
 }

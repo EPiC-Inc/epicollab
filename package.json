@@ -1,7 +1,7 @@
 {
   "name": "epicollab",
   "productName": "EPiCOLLAB",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A music production collaboration app",
   "main": "src/index.js",
   "scripts": {
@@ -50,6 +50,7 @@
     "drag-drop": "^7.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "fs-extra": "^9.1.0",
+    "jquery": "^3.6.0",
     "uuid": "^3.4.0"
   },
   "devDependencies": {

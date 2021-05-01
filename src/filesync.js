@@ -1,4 +1,9 @@
 const dragDrop = require( 'drag-drop' );
+const urlParams = new URLSearchParams(window.location.search);
+if (!urlParams.get('id')) {
+    console.error("[X] No ID Found!");
+}
+
 dragDrop( '#dropZone', ( files ) => {
     console.log('a');
     /* const _files = files.map( file => {
@@ -15,3 +20,13 @@ dragDrop( '#dropZone', ( files ) => {
         } );
     } ); */
 } );
+
+function sync() {
+    $('#files').empty();
+    //
+}
+
+$('#drag').on('dragstart', (event) => {
+    event.originalEvent.preventDefault();
+    ipcRenderer.send('ondragstart', '/absolute/path/to/the/item');
+  });

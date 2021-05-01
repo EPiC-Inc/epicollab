@@ -10,17 +10,28 @@
 		<title>New Project | EPiCOLLAB</title>
 		<!-- other components used by express.js -->
 		<link rel="stylesheet" href="index.css">
-		<script defer src="render.js"></script>
+		<script src="render.js"></script>
  	</head>
 
   	<body>
-		<div class='container' id='new-project'>
-			<button onclick="goHome()"><img src='icons/backspace.svg'> Back</button> <br><br>	
+		<div class='container'>
+			<button onclick="goHome()"><img src='icons/backspace.svg'> Back</button> <br><br>
 			<h1>Create a New Project</h1><br><hr><br>
-			<form class='container'>
+			<form class='container' id='new-project'>
 				<label for='projName' class='form-label'>Project Name:</label>
-				<input type='text' class='form-control' id='projName' placeholder="1-32 characters" required maxlength="32">
+				<input type='text' class='form-control' id='projName' placeholder="1-32 characters" required maxlength="32"> <br><br>
+				<input type='submit' class='form-control btn-default' id='submit' value="Create">
 			</form>
 		</div>
+
+		<script>
+			$("#new-project").submit((event) => {
+				event.preventDefault();
+				$('#submit').prop('disabled', true);
+				// Send a 'newProject' call to the main application process
+				ipc.send('newProject', $('#projName').val());
+				listProjects();
+			});
+		</script>
   	</body>
 </html>

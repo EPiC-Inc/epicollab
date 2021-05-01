@@ -10,13 +10,14 @@
 		<title>New Project | EPiCOLLAB</title>
 		<!-- other components used by express.js -->
 		<link rel="stylesheet" href="index.css">
-		<script defer src="render.js"></script>
+		<script src="render.js"></script>
+		<script defer src='filesync.js'></script>
  	</head>
 
   	<body id='dropZone'>
-		  <p>Drag & drop files to add them</p>
-		<div>
+		<button onclick="goHome()"><img src='icons/backspace.svg'> Back</button> <br><br>	
+		<p>Drag & drop files to add them</p>
+		<div id='files'>
 		</div>
   	</body>
-	<script src='filesync.js'></script>
 </html>
