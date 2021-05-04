@@ -3,11 +3,13 @@
 const { app, BrowserWindow, ipcMain: ipc, dialog } = require('electron');
 const { v1: uuid, v4: file_uuid } = require('uuid');
 const path = require('path');
+const axios = require('axios');
+const FormData = require('form-data');
 const fs = require('fs');
 
 // set up projects folder
-var proj_loc = app.getPath('userData') + '/projects';
-var proj_json = proj_loc + '/projects.json'
+var proj_loc = path.join(app.getPath('userData'), 'projects');
+var proj_json = path.join(proj_loc, 'projects.json');
 if (!fs.existsSync(proj_loc)){
   console.log("Creating data folder"); //TEMP
   fs.mkdirSync(proj_loc);
@@ -17,13 +19,13 @@ if (!fs.existsSync(proj_json)){
   // create blank projects.json file
   fs.writeFileSync(proj_json, JSON.stringify({}));
 }
-// ensure all projects have a proper folder and repair if needed
+//ANCHOR: ensure all projects have a proper folder and repair if needed
 fs.readFile(proj_json, (err, data) => {
   data = JSON.parse(data);
   Object.keys(data).forEach(id => {
-    if (!fs.existsSync(proj_loc+'/'+id)){
+    if (!fs.existsSync(path.join(proj_loc, id))){
       console.log("Recreating project folder for "+data[id].name); //TEMP
-      fs.mkdirSync(proj_loc+'/'+id);
+      fs.mkdirSync(path.join(proj_loc, id));
     }
   });
 });
@@ -102,9 +104,9 @@ ipc.on('newProject', (event, arg) => {
   fs.writeFileSync(proj_json, JSON.stringify(new_json));
 
   // create project folder for sounds
-  if (!fs.existsSync(proj_loc+'/'+proj_id)){
+  if (!fs.existsSync(path.join(proj_loc, proj_id))){
     console.log("Creating data folder"); //TEMP
-    fs.mkdirSync(proj_loc+'/'+proj_id);
+    fs.mkdirSync(path.join(proj_loc, proj_id));
   }
 });
 
@@ -134,7 +136,7 @@ ipc.on('listFiles', (event, proj_id) => {
       synced: false,
     }
     if (files.includes(file)) {
-      file_list[file].file_loc = proj_loc+'/'+proj_id+'/'+file;
+      file_list[file].location = proj_loc+'/'+proj_id+'/'+file;
       file_list[file].synced = true;
     }
   });
@@ -150,23 +152,30 @@ ipc.handle('addFile', (event, arg) => {
 
     // make sure the id is accurate
     // this essentially just keeps the extension so that nothing dies
-    var file_id = file_uuid();
+    var file_id = 'f' + file_uuid(); //need the 'f' for html ids cos they need to start with a letter
     file_id += "." + file.name.slice(file.name.indexOf('.', -1) + 1);
 
     //TODO: send proj_id, file_id, file.name, and file itself to remote server
+    var form_data = new FormData();
+    form_data.append('file', fs.createReadStream(file.path));
+    form_data.append('proj_id', proj_id);
+    form_data.append('file_id', file_id);
+    form_data.submit('http://epiclabs.tk/files/new', (err, res) => {
+      if (err) console.error(err);
+      console.log('done');
+    });
 
     // save file to project folder
-    var new_file = proj_loc + '/' + proj_id + '/' + file_id;
+    var new_file = path.join(proj_loc, proj_id, file_id);
     console.log("adding file " + file.path + " to project as " + file_id); //TEMP
     console.log("new path will be "+new_file);
-    fs.copyFile(file.path, new_file, (err) => {
-      if (err) {dialog.showErrorBox("[X] Error copying file!", err);}
-    });
+    fs.copyFileSync(file.path, new_file);
     // and projects.json
     var old_json = fs.readFileSync(proj_json);  // get old project contents
     var new_json = JSON.parse(old_json);
     new_json[proj_id].files[file_id] = {
-      name: file.name
+      name: file.name,
+      color: 0
     };
     // write new json to file
     fs.writeFileSync(proj_json, JSON.stringify(new_json));
@@ -176,6 +185,10 @@ ipc.handle('addFile', (event, arg) => {
   return res;
 });
 
+//ANCHOR: delete file signal
+ipc.on('delFile', (event, arg) => {});
+
+//ANCHOR: sync project signal
 ipc.on('syncProject', (event, proj_id) => {
   console.log("Syncing project with server...");
   //TODO: get current project.json from server
@@ -204,7 +217,7 @@ ipc.on('editFile', (event, arg) => {
 ipc.on('ondragstart', (event, arg) => {
   //console.log(arg);
   event.sender.startDrag({
-    file: proj_loc + '/' + arg[0] + '/' + arg[1],
+    file: path.join(proj_loc, arg[0], arg[1]),
     icon: 'src/icons/file-earmark-music.png'
   });
 });

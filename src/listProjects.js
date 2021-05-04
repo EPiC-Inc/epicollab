@@ -13,3 +13,5 @@ ipc.invoke('listProjects').then((res) => {
         </div>");
     });
 });
+
+//TODO: Add search function

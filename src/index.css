@@ -78,7 +78,38 @@ body {
   outline: 8px dashed darkcyan;
   outline-offset: -24px;
 }
+.stop-blue-overlay::after {
+  z-index: 10;
+  display: block;
+  position: absolute;
+  height: 0 !important;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+#files {
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+.file-btn {
+  margin-left: 1%;
+}
+
+.file {
+  max-width: 80%;
+  margin: auto;
+  margin-bottom: 3%;
+  color: orange;
+}
 
 .file-synced {
   color: lightgreen;
+  font-size: large;
+}
+
+li::marker {
+  content: '';
+  visibility: hidden;
 }
