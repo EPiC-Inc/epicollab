@@ -52,6 +52,7 @@ body {
 
 #dropZone {
   padding-top: 2%;
+  height: 100vh;
 }
 
 .proj-name {
@@ -103,4 +104,15 @@ body {
 li::marker {
   content: '';
   visibility: hidden;
+}
+
+.proj-title {
+  color: aqua;
+  font-size: x-large;
+  font-weight: bold;
+  margin: 0px 2%;
+}
+
+#fileSearch {
+  margin-left: 2%;
 }

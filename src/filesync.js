@@ -162,3 +162,11 @@ ipc.on('files', (event, res) => {
 });
 
 sync();
+
+//ANCHOR: Search
+$("#fileSearch").on("keyup", () => {
+    var val = $("#fileSearch").val().toLowerCase();
+    $("#files .file").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1)
+    });
+});

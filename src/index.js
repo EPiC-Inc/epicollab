@@ -7,7 +7,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 
-const fileserver = 'http://127.0.0.1:5000';
+const fileserver = 'http://epiclabs.tk';
 
 // set up projects folder
 var proj_loc = path.join(app.getPath('userData'), 'projects');
@@ -225,6 +225,12 @@ ipc.on('syncProject', (event, proj_id) => {
       });
       res.on('end', function() {
         _data = JSON.parse(_data);
+        var old_json = fs.readFileSync(proj_json);  // get old project contents
+        var new_json = JSON.parse(old_json);
+        new_json[proj_id] = _data;
+        // write new json to file
+        fs.writeFileSync(proj_json, JSON.stringify(new_json));
+
         to_dl = _data.files;
         console.log(to_dl)//TEMP
         Object.keys(to_dl).forEach(file => {
@@ -236,6 +242,11 @@ ipc.on('syncProject', (event, proj_id) => {
   });
   //TODO: get current project.json from server
   // add whatever's missing to current projects.json
+});
+
+//ANCHOR: join project signal
+ipc.on('joinProject', (event, proj_id) => {
+  var form_data = new FormData();
 });
 
 //ANCHOR: drag start
