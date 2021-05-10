@@ -113,7 +113,7 @@ ipc.on('newProject', (event, arg) => {
     });
     res.on('end', function() {
       console.log("[i]" + _data);
-  });
+    });
   });
 
   //console.log(JSON.parse(old_json));  //TEMP
@@ -215,34 +215,28 @@ ipc.on('syncProject', (event, proj_id) => {
     data = data[proj_id];
     var form_data = new FormData();
     form_data.append('proj_id', proj_id);
-    form_data.append('proj_json', data);
+    form_data.append('proj_json', JSON.stringify(data));//TODO: FIX ERROR
     form_data.submit(fileserver+'/project', (err, res) => {
       if (err) console.error(err);
-      data = res;
-      console.log(data);
+      // Get data in parts
+      _data = '';
+      res.on('readable', () => {
+        _data += res.read();
+      });
+      res.on('end', function() {
+        _data = JSON.parse(_data);
+        to_dl = _data.files;
+        console.log(to_dl)//TEMP
+        Object.keys(to_dl).forEach(file => {
+          console.log(file);
+          //TODO: For each file, download if not already downloaded
+        });
+      });
     });
   });
   //TODO: get current project.json from server
   // add whatever's missing to current projects.json
 });
-
-/* //ANCHOR: edit file signal
-ipc.on('editFile', (event, arg) => {
-  var file = proj_loc + '/' + arg.proj_id + '/' +arg.target;
-  console.log("starting file operation on file " + file); //TEMP
-  switch(arg.operation) {
-    case 'create':
-      console.log('creating file...');  //TEMP
-      //file_uuid();
-      break;
-    case 'delete':
-      console.log('deleting file...');  //TEMP
-      break;
-    case 'replace':
-      console.log('replacing file...'); //TEMP
-      break;
-  }
-}); */
 
 //ANCHOR: drag start
 ipc.on('ondragstart', (event, arg) => {
@@ -264,7 +258,7 @@ ipc.on('info', (event, msg) => {
     detail: msg[1]
   }
   dialog.showMessageBox(options);
-})
+});
 ipc.on('warn', (event, msg) => {
   var options = {
     type: 'warning',
@@ -272,4 +266,4 @@ ipc.on('warn', (event, msg) => {
     detail: msg[1]
   }
   dialog.showMessageBox(options);
-})
+});
