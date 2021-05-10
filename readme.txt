@@ -4,6 +4,11 @@ Originally I wanted to do a peer2peer thing but due to time (and expertise) limi
 I have uploaded the source code (here) and an executable version (no viruses, I promise).
 To run it from the source, you'll need Node.JS with the node module dependencies specified in package.json.
 
+In order to use it, first create a project with the Add Project button.
+On the View Projects page, select the created project
+Drag and drop .wav files from your computer to add them to the project and upload them to the dedicated fileserver.
+(The fileserver is written in Python, not JS, so I did not include it.)
+
 There were a few features I did not have time to implement due to the ambitious nature of the app:
 - a method to delete files
 - the 'sync' function does not download the files, though it does update projects.json
