@@ -7,7 +7,7 @@ ipc.invoke('listProjects').then((res) => {
         var name = res[proj].name;
         // spaghetti code assembly line :]
         $('#projects').append("<div class=\"proj-name\" id=\"" + proj + "\" \
-        onclick=\"viewProject(\'" + proj + "\')\"> \
+        onclick=\"viewProject(\'" + proj + "\', \'" + name + "\')\"> \
         " + name + " \
         <img src=\"icons/arrow-bar-right.svg\" width=\"48\" height=\"48\" draggable=\"false\"> \
         </div>");

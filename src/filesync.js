@@ -1,14 +1,24 @@
 const dragDrop = require( 'drag-drop' );
+const { contains } = require('jquery');
 const urlParams = new URLSearchParams(window.location.search);
 const proj_id = urlParams.get('id');
 if (!proj_id) {
-    console.error("[X] No ID Found!");
+    console.error("[X] No ID found!");
+}
+const proj_name = urlParams.get('name');
+$("#proj-name").text(proj_name);
+if (!proj_name) {
+    console.error("[!] No name found!");
 }
 var waveforms = {};
 var dropDisabled = false;
 
 function sync() {
     ipc.send('listFiles', proj_id);
+}
+
+function dlFiles() {
+    ipc.send('syncProject', proj_id);
 }
 
 function getWaveColor(color) {
@@ -35,6 +45,21 @@ function getPlayedColor(color) {
 }
 
 //ANCHOR: drag in
+$('#dropZone').on('drop', (event) => {
+    if (dropDisabled) {return;}
+});
+document.addEventListener('dragover', (event) => {
+    console.log('a');
+    if (dropDisabled) {$("#dropZone").removeClass('overlay');}
+    event.preventDefault();
+    event.stopPropagation();
+});
+$("#dropZone").on('dragleave', (event) => {
+    $("#dropZone").removeClass('overlay');
+    event.preventDefault();
+    event.stopPropagation();
+});
+
 dragDrop('#dropZone', (files) => {
     if (dropDisabled) {return;}
 
@@ -71,7 +96,7 @@ dragDrop('#dropZone', (files) => {
 
 $("#dropZone").on("mouseenter", (event) => {
     dropDisabled = false;
-    $("#dropZone").removeClass("stop-blue-overlay");
+    //$("#dropZone").removeClass("stop-blue-overlay");
 });
 
 ipc.on('files', (event, res) => {
@@ -95,7 +120,7 @@ ipc.on('files', (event, res) => {
         new_child.attr('id', file);
         new_child.on('dragstart', (event) => {
             dropDisabled = true;
-            $("#dropZone").addClass("stop-blue-overlay");
+            //$("#dropZone").addClass("stop-blue-overlay");
             console.log('file drag started');
             event.originalEvent.preventDefault();
             ipc.send('ondragstart', [proj_id, file]);

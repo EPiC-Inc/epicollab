@@ -65,7 +65,7 @@ body {
   filter: drop-shadow(4px 4px 3px cyan);
 }
 
-.drag::after {
+.overlay::after {
   content: " ";
   z-index: 10;
   display: block;
@@ -74,18 +74,9 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(1, 192, 206, 0.5);
+  background: rgba(1, 192, 206, 0.4);
   outline: 8px dashed darkcyan;
   outline-offset: -24px;
-}
-.stop-blue-overlay::after {
-  z-index: 10;
-  display: block;
-  position: absolute;
-  height: 0 !important;
-  top: 0;
-  left: 0;
-  right: 0;
 }
 
 #files {

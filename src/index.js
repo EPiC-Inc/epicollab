@@ -7,15 +7,17 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 
+const fileserver = 'http://127.0.0.1:5000';
+
 // set up projects folder
 var proj_loc = path.join(app.getPath('userData'), 'projects');
 var proj_json = path.join(proj_loc, 'projects.json');
 if (!fs.existsSync(proj_loc)){
-  console.log("Creating data folder"); //TEMP
+  console.log("[i] Creating data folder"); //TEMP
   fs.mkdirSync(proj_loc);
 }
 if (!fs.existsSync(proj_json)){
-  console.log("Creating project json file"); //TEMP
+  console.log("[i] Creating project json file"); //TEMP
   // create blank projects.json file
   fs.writeFileSync(proj_json, JSON.stringify({}));
 }
@@ -97,15 +99,31 @@ ipc.on('newProject', (event, arg) => {
     name: arg,
     files: {}
   };
+
+  console.log("[i] sending new project json to server");
+  var form_data = new FormData();
+  form_data.append('proj_id', proj_id);
+  form_data.append('proj_json', JSON.stringify(new_json[proj_id]));
+  form_data.submit(fileserver+'/project', (err, res) => {
+    if (err) console.error(err);
+    // Get data in parts
+    _data = '';
+    res.on('readable', () => {
+      _data += res.read();
+    });
+    res.on('end', function() {
+      console.log("[i]" + _data);
+  });
+  });
+
   //console.log(JSON.parse(old_json));  //TEMP
   //console.log(new_json);  //TEMP
-
   // write new json to file
   fs.writeFileSync(proj_json, JSON.stringify(new_json));
 
   // create project folder for sounds
   if (!fs.existsSync(path.join(proj_loc, proj_id))){
-    console.log("Creating data folder"); //TEMP
+    console.log("[i] Creating data folder"); //TEMP
     fs.mkdirSync(path.join(proj_loc, proj_id));
   }
 });
@@ -160,9 +178,9 @@ ipc.handle('addFile', (event, arg) => {
     form_data.append('file', fs.createReadStream(file.path));
     form_data.append('proj_id', proj_id);
     form_data.append('file_id', file_id);
-    form_data.submit('http://epiclabs.tk/files/new', (err, res) => {
+    form_data.submit(fileserver+'/files/new', (err, res) => {
       if (err) console.error(err);
-      console.log('done');
+      console.log('[i] ' + file_id + ' sent to server');
     });
 
     // save file to project folder
@@ -190,7 +208,20 @@ ipc.on('delFile', (event, arg) => {});
 
 //ANCHOR: sync project signal
 ipc.on('syncProject', (event, proj_id) => {
-  console.log("Syncing project with server...");
+  console.log("[i] Syncing project with server...");
+
+  fs.readFile(proj_json, (err, data) => {
+    data = JSON.parse(data);
+    data = data[proj_id];
+    var form_data = new FormData();
+    form_data.append('proj_id', proj_id);
+    form_data.append('proj_json', data);
+    form_data.submit(fileserver+'/project', (err, res) => {
+      if (err) console.error(err);
+      data = res;
+      console.log(data);
+    });
+  });
   //TODO: get current project.json from server
   // add whatever's missing to current projects.json
 });

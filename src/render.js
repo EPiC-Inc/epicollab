@@ -17,8 +17,8 @@ function listProjects() {
     window.location.href = 'listProjects.html';
 }
 
-function viewProject( proj_id ) {
-    window.location.href = 'project.html?id='+proj_id;
+function viewProject( proj_id, proj_name ) {
+    window.location.href = 'project.html?id='+proj_id+"&name="+proj_name;
 }
 
 function goHome() {
