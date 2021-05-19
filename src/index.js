@@ -56,7 +56,7 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -130,7 +130,7 @@ const sync = function(proj_id, callback) {
         console.log(to_dl)//TEMP
         let c = 0;
         if (!fs.existsSync(path.join(PROJ_LOC, proj_id))){
-          console.log("[i] Recreating project folder for "+data[proj_id].name); //TEMP
+          console.log("[i] Recreating project folder for "+_data['name']); //TEMP
           fs.mkdirSync(path.join(PROJ_LOC, proj_id));
         }
         Object.keys(to_dl).forEach(file => {
@@ -277,7 +277,7 @@ ipc.on('joinProject', (event, proj_id) => {
   var old_json = fs.readFileSync(PROJ_JSON);  // get old project contents
   var new_json = JSON.parse(old_json);
   new_json[proj_id] = {
-    name: '[ERROR, PLEASE CONTACT EPiC_LABS]',
+    name: 'ERROR, PLEASE CONTACT EPiC_LABS',
     files: {}
   };
   fs.writeFileSync(PROJ_JSON, JSON.stringify(new_json));
