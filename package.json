@@ -1,7 +1,7 @@
 {
   "name": "epicollab",
   "productName": "EPiCOLLAB",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A music production collaboration app",
   "main": "src/index.js",
   "scripts": {
