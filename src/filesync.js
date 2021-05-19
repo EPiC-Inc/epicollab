@@ -1,4 +1,5 @@
 const dragDrop = require( 'drag-drop' );
+const { clipboard } = require('electron');
 const { contains } = require('jquery');
 const urlParams = new URLSearchParams(window.location.search);
 const proj_id = urlParams.get('id');
@@ -13,12 +14,21 @@ if (!proj_name) {
 var waveforms = {};
 var dropDisabled = false;
 
+function copyID() {
+    clipboard.writeText(proj_id);
+}
+
 function sync() {
     ipc.send('listFiles', proj_id);
 }
+ipc.on('listFiles', () => {
+    ipc.send('listFiles', proj_id);
+    $('#sync').prop("disabled", false);
+});
 
 function dlFiles() {
     ipc.send('syncProject', proj_id);
+    $('#sync').prop("disabled", true);
 }
 
 function getWaveColor(color) {

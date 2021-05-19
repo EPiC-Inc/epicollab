@@ -32,9 +32,54 @@
 		<hr>
 		<p><!--ANCHOR bugs-->
 			<h3>Known bugs:</h3><br>
-			<ul>
-				<li>All files refresh every time a file updates, which is visually annoying and makes any playing sound unpausable (possible fix: either destroy all waveforms on sync or figure out how to refresh only one file)</li>
+			<ul id='bugs'>
+				<li>All files refresh every time a file updates, which is visually annoying and makes any playing sound unpausable [possible fix: either destroy all waveforms on sync or figure out how to refresh only one file]</li>
+				<li>New files are put at the end... maybe reverse the received list clientside? [maybe also add 'only show downloaded' toggle]</li>
+				<li>Cool file upload overlay doesn't work</li>
+				<li>May have to 'sync' several times as the waveform breaks if the file list reloads if the file hasn't yet downloaded, which happens *checks notes* nearly 100% of the time since, y'know, networks are usually slower then local apps</li>
+				<li>Crashes the fileserver under the following conditions: 1) the project folder and project.json are not found on the server, 2) the project exists on the local machine, and 3) a file is uploaded [i have no idea why this is happening]</li>
+				<li>why am i telling y'all how to break my stuff :[</li>
 			</ul>
 		</p>
+
+		<div id='joinProject' class='modal'>
+			<div class="modal" tabindex="-1">
+				<div class="modal-dialog">
+				  <div class="modal-content">
+					<div class="modal-body">
+						<form class='container' id='joinProject-form'>
+							<input type='text' class='form-control' id='proj-id' placeholder="Project ID" required> <br><br>
+							<input type='submit' class='form-control btn-default' id='submit' value="Join">
+						</form>
+					</div>
+				  </div>
+				</div>
+			  </div>
+		</div>
   	</body>
+
+	<script>
+		$("#joinProject").hide();
+		function joinProject() {
+    		// Pop up dialogue that prompts you for project ID
+			$("#joinProject").show();
+		}
+
+		$('#joinProject').on('click', (event) => {
+			if ($(event.target).hasClass('modal')) {
+				$("#joinProject").hide();
+			}
+		});
+
+		$("#joinProject-form").submit((event) => {
+			event.preventDefault();
+			$('#submit').prop('disabled', true);
+			// Send a 'joinProject' call to the main application process
+			ipc.send('joinProject', $('#proj-id').val());
+		});
+
+		ipc.on('go', (event, proj_id, proj_name) => {
+			viewProject(proj_id, proj_name);
+		});
+	</script>
 </html>

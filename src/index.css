@@ -3,7 +3,7 @@
 body {
   font-family: "Aldrich", Calibri, sans-serif;
   margin: auto;
-  padding-top: 10%;
+  padding-top: 5%;
   max-width: 90%;
   text-align: center;
   background-color: #222;
@@ -21,11 +21,16 @@ body {
 
 #main-menu .btn {
   border: 8px solid darkcyan;
+  transition-property: background-color;
+  transition-duration: 200ms;
   border-radius: 16px;
   font-size: x-large;
   margin-bottom: 14%;
   padding: 16px;
   color: #DDD;
+}
+#main-menu .btn:hover{
+  background-color: #2C2C2C;
 }
 
 #main-menu .btn img{
@@ -46,7 +51,7 @@ body {
   display: inline-block;
 }
 
-.form-control:disabled {
+.form-control:disabled, button:disabled {
   cursor: not-allowed;
 }
 
@@ -111,8 +116,28 @@ li::marker {
   font-size: x-large;
   font-weight: bold;
   margin: 0px 2%;
+  cursor: cell;
+}
+.proj-title:active{
+  color: darkcyan;
 }
 
 #fileSearch {
   margin-left: 2%;
+}
+
+#bugs li {
+  margin-bottom: 16px;
+}
+
+.modal {
+  display: inline;
+  background-color: rgba(1, 192, 206, 0.2);
+}
+.modal-dialog {
+  top: 30%;
+}
+.modal-content {
+  background-color: #2C2C2C;
+  padding: 16px;
 }
