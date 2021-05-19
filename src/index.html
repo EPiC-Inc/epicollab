@@ -75,7 +75,7 @@
 			event.preventDefault();
 			$('#submit').prop('disabled', true);
 			// Send a 'joinProject' call to the main application process
-			ipc.send('joinProject', $('#proj-id').val());
+			ipc.send('joinProject', $('#proj-id').val().trim());
 		});
 
 		ipc.on('go', (event, proj_id, proj_name) => {

@@ -121,7 +121,7 @@ const sync = function(proj_id, callback) {
         var new_json = JSON.parse(old_json);
         new_json[proj_id] = _data;
         // CALLBACK
-        if (callback) {callback(_data.name)}
+        if (callback) {callback(_data['name'])}
         // write new json to file
         fs.writeFileSync(PROJ_JSON, JSON.stringify(new_json));
 
