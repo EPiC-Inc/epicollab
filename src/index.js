@@ -107,7 +107,7 @@ const sync = function(proj_id, callback) {
     data = data[proj_id];
     var form_data = new FormData();
     form_data.append('proj_id', proj_id);
-    form_data.append('PROJ_JSON', JSON.stringify(data));//TODO: FIX ERROR
+    form_data.append('proj_json', JSON.stringify(data));//TODO: FIX ERROR
     form_data.submit(FILESERVER+'/project', (err, res) => {
       if (err) console.error(err);
       // Get data in parts
@@ -116,6 +116,7 @@ const sync = function(proj_id, callback) {
         _data += res.read();
       });
       res.on('end', () => {
+        console.log(_data)//TEMP
         _data = JSON.parse(_data);
         var old_json = fs.readFileSync(PROJ_JSON);  // get old project contents
         var new_json = JSON.parse(old_json);
@@ -160,7 +161,7 @@ ipc.on('newProject', (event, arg) => {
   console.log("[i] sending new project json to server");
   var form_data = new FormData();
   form_data.append('proj_id', proj_id);
-  form_data.append('PROJ_JSON', JSON.stringify(new_json[proj_id]));
+  form_data.append('proj_json', JSON.stringify(new_json[proj_id]));
   form_data.submit(FILESERVER+'/project', (err, res) => {
     if (err) console.error(err);
     // Get data in parts
@@ -169,7 +170,7 @@ ipc.on('newProject', (event, arg) => {
       _data += res.read();
     });
     res.on('end', () => {
-      console.log("[i]" + _data);
+      //console.log("[i]" + _data);
     });
   });
 

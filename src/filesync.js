@@ -8,6 +8,7 @@ if (!proj_id) {
 }
 const proj_name = urlParams.get('name');
 $("#proj-name").text(proj_name);
+$('#title').text(proj_name + ' | EPiCOLLAB')
 if (!proj_name) {
     console.error("[!] No name found!");
 }
