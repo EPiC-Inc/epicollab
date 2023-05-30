@@ -7,7 +7,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 
-const FILESERVER = 'http://epiclabs.tk';
+const FILESERVER = 'https://opticor.digital';
 const http = require('http'); //MAKE SURE TO UPDATE WHEN UPDATING FILESERVER
 
 // set up projects folder
