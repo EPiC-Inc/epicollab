@@ -91,3 +91,6 @@ out/
 # App-specific shits
 settings.json
 uploads/
+
+# VS Code options folder
+.vscode/
