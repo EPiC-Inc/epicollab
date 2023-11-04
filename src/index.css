@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Aldrich&display=swap');
 
+* {
+  --main-color: #00A5FF;
+  --transparent-color: #00A5FF40;
+}
+
 body {
   font-family: "Aldrich", Calibri, sans-serif;
   margin: auto;
@@ -20,7 +25,7 @@ body {
 }
 
 #main-menu .btn {
-  border: 8px solid darkcyan;
+  border: 8px solid var(--main-color);
   transition-property: background-color;
   transition-duration: 200ms;
   border-radius: 16px;
@@ -68,7 +73,7 @@ body {
   margin-bottom: 1%;
 }
 .proj-name:hover {
-  filter: drop-shadow(4px 4px 3px cyan);
+  filter: drop-shadow(4px 4px 3px var(--main-color));
 }
 
 .overlay::after {
@@ -80,8 +85,8 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(1, 192, 206, 0.4);
-  outline: 8px dashed darkcyan;
+  background: var(--transparent-color);
+  outline: 8px dashed var(--main-color);
   outline-offset: -24px;
 }
 
@@ -119,7 +124,7 @@ li::marker {
   cursor: cell;
 }
 .proj-title:active{
-  color: darkcyan;
+  color: var(--main-color);
 }
 
 #fileSearch {
@@ -132,7 +137,7 @@ li::marker {
 
 .modal {
   display: inline;
-  background-color: rgba(1, 192, 206, 0.2);
+  background-color: var(--transparent-color);
 }
 .modal-dialog {
   top: 30%;

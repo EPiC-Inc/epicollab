@@ -7,8 +7,9 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 
-const FILESERVER = 'https://opticor.digital';
-const http = require('http'); //MAKE SURE TO UPDATE WHEN UPDATING FILESERVER
+//MAKE SURE TO UPDATE WHEN UPDATING FILESERVER
+const FILESERVER = 'https://files.opticor.digital/epicollab';
+const http = require('http');
 
 // set up projects folder
 const PROJ_LOC = path.join(app.getPath('userData'), 'projects');
@@ -143,7 +144,7 @@ const sync = function(proj_id, callback) {
         });
       });
     });
-  }); 
+  });
 }
 
 //ANCHOR: new project signal
