@@ -50,7 +50,7 @@
     "bootstrap-icons": "^1.4.1",
     "drag-drop": "^7.0.0",
     "electron-squirrel-startup": "^1.0.0",
-    "form-data": "^2.3.3",
+    "form-data": "^2.5.5",
     "fs-extra": "^9.1.0",
     "jquery": "^3.6.0",
     "uuid": "^3.4.0"
